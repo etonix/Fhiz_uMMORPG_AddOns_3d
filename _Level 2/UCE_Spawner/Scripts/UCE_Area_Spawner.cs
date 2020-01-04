@@ -70,13 +70,14 @@ public abstract class UCE_Area_Spawner : NetworkBehaviour
 
         if (player && enterActivationRequirements.checkRequirements(player))
         {
-            if (gameObjects.Count < maxGameObjects)
-            {
+            if (unspawnOnPlayerExit)
                 CancelInvoke("unspawnGameObjects");
 
-                currentPlayerLevel = player.level;
-                players.Add(player);
+            currentPlayerLevel = player.level;
+            players.Add(player);
 
+            if (gameObjects.Count < maxGameObjects)
+            {
                 OnSpawn();
             }
         }
@@ -90,10 +91,10 @@ public abstract class UCE_Area_Spawner : NetworkBehaviour
     {
         Player player = co.GetComponentInParent<Player>();
 
-        if (player && unspawnOnPlayerExit)
+        if (player)
         {
             players.Remove(player);
-            if (players.Count <= 0)
+            if (players.Count <= 0 && unspawnOnPlayerExit)
             {
                 if (unspawnDelay > 0)
                     Invoke("unspawnGameObjects", unspawnDelay);
